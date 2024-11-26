@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-montserrat: 'Montserrat', sans-serif;
+  --background: #ffffff;
+  --foreground: #171717;
+  --primary-color: #76b900;
+  /* slightly darker for hover states */
+  --primary-hover: #669f00;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+    --primary-color: #76b900;
+    /* slightly darker for hover states */
+    --primary-hover: #669f00;
+  }
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-montserrat);
+  background-color: var(--background);
+  color: var(--foreground);
+  background-image: url('/background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  /* backdrop-filter: brightness(50%); Makes image darker (0-100%) */
+  /* backdrop-filter: opacity(50%); Makes image more transparent (0-100%) */
+  /* backdrop-filter: contrast(80%); Reduces contrast (0-200%) */
+}
+
+/* 
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+} */

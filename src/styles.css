@@ -1,0 +1,984 @@
+:root {
+    --font-montserrat: 'Montserrat', sans-serif;
+  }
+  
+  body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100vh;
+    font-family: var(--font-montserrat); /* Use the font variable here */
+    background-color: #121212;
+    color: #e0e0e0;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+  }
+
+#tsparticles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.container {
+    display: block;
+    flex-direction: column;
+    align-items:center;
+    justify-content: center;
+    min-height: 100vh;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 1;
+    max-width: 600px;
+    width: 90%;
+    margin: 0 auto;
+}
+
+.header {
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: -3px;
+    padding: 0 0px;
+    box-sizing: border-box;
+}
+
+.logo-title-container {
+    display: flex;
+    align-items: flex-end;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    
+}
+
+.logo {
+    width: 100px;
+    height: auto;
+    margin-top: 7px;
+}
+
+.site-title {
+    margin-left: 15px;
+    font-size: 2rem;
+    margin-top: -9px;
+    color: #e0e0e0;
+    font-weight: bold;
+}
+
+/* Pool Info */
+.pool-info {
+    background-color: rgba(30, 30, 30, 0.75);
+    padding: 25px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.3);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    text-align: left;
+}
+
+/* Wallet Button Styles */
+.wallet-adapter-button-trigger {
+    background-color: #76b900 !important;
+    width: 100% !important;
+    justify-content: center !important;
+    height: 48px !important;
+    border-radius: 8px !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    transition: background-color 0.2s ease !important;
+}
+
+.wallet-adapter-button-trigger:hover {
+    background-color: #669f00 !important; /* Darker shade for hover */
+    opacity: 1 !important;
+}
+
+.wallet-adapter-button-trigger:not([disabled]):hover {
+    background-color: #669f00 !important;
+}
+
+/* Main middle section with Wallet Balance and Staked balance */
+.wallet-status {
+    background-color: rgba(30, 30, 30, 0.75);
+    padding: 25px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.3);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    text-align: left;
+}
+
+.wallet-status h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #e0e0e0;
+}
+
+.balances,
+.staked-balance-section {
+    margin-top: 10px;
+    padding: 0px 0px;
+    font-size: 15px;
+    font-weight: lighter;
+    max-width: 1000px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.balance-list {
+    list-style-type: none;
+    padding: 0; 
+    margin: 0;
+}
+
+.balance-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3px 0;
+    margin: 0;
+    border-bottom: 1px solid rgba(224, 224, 224, 0.1);
+}
+
+.balance-list li:last-child {
+    border-bottom: none;
+}
+
+.token-name {
+    font-weight: lighter;
+    margin-right: 50px;
+    text-align: left;
+}
+
+.token-amount {
+    text-align: right;
+    min-width: 100px;
+}
+
+.separator {
+    margin: 20px 0;
+    border: none;
+    border-top: 2px solid #e0e0e0;
+    width: 100%;
+    max-width: 1000px;
+}
+
+.staked-balance-section {
+    text-align: left;
+}
+
+.staked-balance-section h3 {
+    margin-bottom: 10px;
+    color: #e0e0e0;
+}
+
+.staked-balance-section p {
+    font-size: 1.2em;
+    color: #e0e0e0;
+}
+
+.staked-balance-section .error {
+    color: #c70039;
+}
+
+.input-group {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.amount-input, .select-token {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 300px;
+    font-size: 1rem;
+    background-color: rgba(224, 224, 224, 0.1);
+    color: #e0e0e0;
+}
+
+.amount-input::placeholder {
+    color: #b0b0b0;
+}
+
+.amount-input:focus, .select-token:focus {
+    outline: none;
+    box-shadow: 0 0 5px #a16b00;
+    background-color: rgba(224, 224, 224, 0.15);
+}
+
+.button-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+.button {
+    width: auto;
+    max-width: none;
+    padding: 8px 16px;
+    margin: 0;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    color: #ffffff;
+    transition: background-color 0.3s ease, opacity 0.3s ease;
+    white-space: nowrap;
+    box-sizing: border-box;
+    background-color: #333333;
+}
+
+.button:hover:not(:disabled) {
+    opacity: 0.85;
+}
+
+.button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.stake-button.active {
+    background-color: #3f9342;
+    cursor: pointer;
+}
+
+.stake-button.inactive {
+    background-color: #454545;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+.stake-button-button:hover:not(:disabled) {
+    background-color: #1765b4;
+    cursor: pointer;
+}
+
+.unstake-button {
+    background-color: #b71c1c;
+}
+
+.unstake-button:hover:not(:disabled) {
+    background-color: #9a1414;
+    opacity: 0.85;
+}
+
+.unstake-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.connect-wallet-message {
+    text-align: center;
+    color: #c7a600;
+    margin-top: 20px;
+}
+
+.countdown {
+    margin-top: 20px;
+    background-color: rgba(199, 166, 0, 0.2);
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-align: center;
+    color: #e0e0e0;
+}
+
+.select-token {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 300px;
+    font-size: 1rem;
+    background-color: #333333;
+    color: #e0e0e0;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23e0e0e0' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 011 0L8 10.293l5.354-5.647a.5.5 0 11.708.708l-6 6.3a.5.5 0 01-.708 0l-6-6a.5.5 0 010-.708z' clip-rule='evenodd'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px 16px;
+    padding-right: 40px;
+}
+
+.select-token:focus {
+    outline: none;
+    box-shadow: 0 0 5px #a16b00;
+    background-color: #444444;
+}
+
+.wallet-address-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: 600px;
+}
+
+.copy-button {
+    background-color: rgba(161, 107, 0, 0.1);
+    color: #000;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    font-size: 1rem;
+}
+
+.copy-button:hover {
+    background-color: rgba(140, 89, 0, 0.15);
+}
+
+.copy-feedback {
+    display: block;
+    margin-top: 5px;
+    color: #a16b00;
+    font-size: 0.9em;
+}
+
+.large-heading {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+body::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(18, 18, 18, 0.5);
+    pointer-events: none;
+    z-index: 0;
+}
+
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .logo-title-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .site-title {
+        margin-left: 0;
+        margin-top: 10px;
+        font-size: 1.8rem;
+    }
+
+    .wallet-adapter-button {
+        margin-top: 15px;
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .balance-list li {
+        font-size: 1.1em;
+    }
+
+    .button-group {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .button-group .button {
+        width: 100%;
+        max-width: 300px;
+        margin: 5px 0;
+    }
+
+    .wallet-status {
+        align-items: center;
+        text-align: center;
+    }
+
+    .wallet-address-container {
+        max-width: 100%;
+    }
+
+    .balance-list li {
+        padding: 15px 0;
+    }
+
+    .stake-countdown {
+        margin-top: 20px;
+        background-color: rgba(161, 107, 0, 0.1);
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-align: center;
+        color: #e0e0e0;
+        font-size: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    @media (max-width: 768px) {
+        .stake-countdown {
+            font-size: 0.95rem;
+            padding: 8px 16px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .stake-countdown {
+            font-size: 0.9rem;
+            padding: 6px 12px;
+        }
+    }
+
+    .stake-active {
+        margin-top: 20px;
+        background-color: rgba(76, 175, 80, 0.1);
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-align: center;
+        color: #e0e0e0;
+        font-size: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .stake-active:hover {
+        background-color: rgba(76, 175, 80, 0.15);
+    }
+
+    @media (max-width: 768px) {
+        .stake-active {
+            font-size: 0.95rem;
+            padding: 8px 16px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .stake-active {
+            font-size: 0.9rem;
+            padding: 6px 12px;
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        padding: 0 10px;
+    }
+
+    .logo {
+        width: 80px;
+    }
+
+    .site-title {
+        font-size: 1.5rem;
+    }
+
+    .wallet-adapter-button {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+        max-width: 250px;
+    }
+
+    .wallet-status {
+        padding: 15px;
+        max-width: 100%;
+    }
+
+    .wallet-address-container {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        max-width: 90%;
+    }
+
+    .wallet-address {
+        font-size: 1rem;
+        text-align: center;
+    }
+
+    .copy-button {
+        padding: 10px 20px;
+        font-size: 1rem;
+        margin-top: 10px;
+    }
+
+    .copy-feedback {
+        font-size: 0.8em;
+    }
+
+
+    .amount-input, .select-token {
+        max-width: 100%;
+    }
+
+    .button-group {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .button-group .button {
+        width: 100%;
+        max-width: 250px;
+        padding: 10px;
+        font-size: 1rem;
+    }
+
+    .connect-wallet-message {
+        font-size: 1em;
+    }
+
+    .countdown {
+        padding: 8px 16px;
+        font-size: 1em;
+    }
+
+    #tsparticles {
+        display: show;
+    }
+}
+
+@media (max-width: 480px) {
+    #tsparticles {
+        display: show;
+    }
+}
+
+@media (max-width: 600px) {
+    .amount-input, .select-token {
+        max-width: 100%;
+    }
+}
+
+.staking-timer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    margin: 20px 0;
+}
+
+.site-title span {
+    display: block;
+}
+
+.staking-reward {
+    background-color: rgba(42, 42, 42, 0.85);
+    padding: 12px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+    margin-bottom: 20px;
+    text-align: center;
+    width: 100%;
+    max-width: 800px;
+}
+
+.staking-reward h3.large-heading-important {
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #e0e0e0;
+    margin: 0;
+}
+
+.stake-reward-balance {
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #e0e0e0;
+    margin-top: 5px;
+}
+
+
+@media (max-width: 768px) {
+    .staking-reward {
+        padding: 15px;
+    }
+    
+    .stake-reward-balance {
+        font-size: 1.8em;
+    }
+}
+
+@media (max-width: 480px) {
+    .staking-reward {
+        padding: 10px;
+    }
+
+    .staking-reward h3.large-heading-important {
+        font-size: 1.3em;
+    }
+
+    .stake-reward-balance {
+        font-size: 1.5em;
+    }
+}
+
+.balance-item {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .balance-item:hover {
+    background-color: rgba(30, 30, 30, 0.75);
+  }
+
+.balance-item.disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  
+  .balance-item.disabled:hover {
+    background-color: transparent;
+  }
+
+.balance-item:active {
+    background-color: rgba(224, 224, 224, 0.2);
+}
+
+.balance-item:focus {
+    outline: none;
+    background-color: rgba(224, 224, 224, 0.15);
+}
+
+/* Toastify Container */
+.Toastify__toast-container {
+    width: 90%;
+    max-width: 350px;
+    padding: 0;
+    left: 10px;
+    bottom: 10px;
+    font-family: var(--font-montserrat);
+    color: #e0e0e0;
+  }
+  
+  /* Toast Notifications Styling */
+  .Toastify__toast {
+    background-color: rgba(51, 51, 51, 0.9); /* Dark gray background */
+    color: #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    padding: 15px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  
+  /* Specific Toast Types */
+  .Toastify__toast--success {
+    background-color: rgba(29, 29, 29, 0.9);
+    color: #ffffff;
+  }
+  
+  .Toastify__toast--error {
+    background-color: rgba(29, 29, 29, 0.9);
+    color: #ffffff;
+  }
+  
+  .Toastify__toast--info {
+    background-color: rgba(29, 29, 29, 0.9);
+    color: #e0e0e0;
+  }
+  
+  /* Close Button */
+  .Toastify__close-button {
+    color: #e0e0e0;
+    opacity: 0.8;
+    font-size: 1.2em;
+  }
+  
+  .Toastify__close-button:hover {
+    opacity: 1;
+  }
+  
+  .lp-links {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.lp-button {
+    background-color: #512929;
+    color: #ffffff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 10px;
+}
+
+.lp-button:hover {
+    background-color: #3c1f1f;
+}
+.claim-rewards-section {
+    display: flex;
+    justify-content: center;
+  }
+
+  .claim-rewards-section {
+    display: flex;
+    justify-content: center;
+    margin: 0px 0px 10px 0px;
+  }
+  
+  .button.claim-reward-button {
+    background-color: #1874cd;
+    cursor: pointer;
+  }
+  
+  .button.claim-reward-button:hover {
+    background-color: #1765b4;
+    cursor: pointer;
+  }
+  .no-margin {
+    margin: 0;
+    font-size: 0.85em;
+    color: #888;
+  }
+
+.header {
+  display: flex;
+  align-items: center;
+  margin-top: 18px;
+  justify-content: space-between;
+}
+
+.logo-title-container {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  margin-right: 16px;
+}
+
+.site-title {
+  font-size: 24px;
+  color: #ffffff;
+}
+
+/* Navigation Links Styling */
+.dashboard-link {
+  display: flex;
+  justify-content: center;
+  padding: 8px 0;
+}
+
+.dashboard-link a {
+  background-color: #76b900 !important;
+  color: #ffffff !important;
+  padding: 8px 16px;
+  margin: 0 8px;
+  border-radius: 8px !important;
+  text-decoration: none;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.dashboard-link a:hover {
+  background-color: #669f00 !important;
+  opacity: 1 !important;
+}
+
+/* Balances Section Styling */
+.balances-section {
+  padding: 16px;
+  /* Additional styling as needed */
+}
+
+/* Separator Styling */
+.separator {
+  border: none;
+  border-top: 1px solid #444;
+  margin:0;
+}
+
+/* Card Styling */
+.card {
+  background-color: rgba(30, 30, 30, 0.85);
+  padding: 12px 0 36px;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  align-items: center;
+  max-width: 600px;
+  margin: 12px 0px 36px 0px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.card h2 {
+  margin-bottom: 16px;
+  color: #e0e0e0;
+}
+
+.input-group {
+  margin-bottom: 16px;
+}
+
+.amount-input,
+.select-token {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.button-group {
+  display: flex;
+  gap: 23px;
+}
+
+.button {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.stake-button {
+  background-color: #4caf50; /* Green for stake */
+  color: #fff;
+}
+
+.unstake-button {
+  background-color: #f44336; /* Red for unstake */
+  color: #fff;
+}
+
+.button:disabled {
+  background-color: #a5d6a7; /* Lighter green when disabled */
+  cursor: not-allowed;
+}
+
+.connect-wallet-message {
+  text-align: center;
+  color: #ff5722;
+  font-weight: bold;
+}
+.staked-balances {
+    margin: 20px 0;
+  }
+  
+  .large-heading {
+    font-size: 1.2em;
+    font-weight: bold;
+  }
+  
+  .balance-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .balance-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    cursor: pointer;
+    padding: 5px 0;
+  }
+  
+  .token-name {
+    font-weight: bold;
+    flex-basis: 30%; 
+    text-align: left;
+  }
+  
+  .token-rewards {
+    font-size: 0.85em;
+    color: #888;
+    opacity: 0.5;
+    flex-basis: 40%; 
+    text-align: center;
+  }
+  
+  .token-balance {
+    flex-basis: 40%; 
+    text-align: right;
+  }
+  
+  .staked-balances {
+    margin: 20px 0;
+  }
+  
+  .large-heading {
+    font-size: 1.2em;
+    font-weight: bold;
+  }
+  
+  .balance-header, .balance-item {
+    display: flex;
+    align-items: center;
+    padding: 5px 0;
+    font-weight: bold;
+    border-bottom: 1px solid #444;
+  }
+  
+  .balance-header {
+    font-size: 0.9em;
+    color: #aaa;
+  }
+  
+  .header-token-name, .token-name {
+    flex-basis: 30%;
+    text-align: left;
+  }
+  
+  .header-rewards, .token-rewards {
+    flex-basis: 40%;
+    text-align: center;
+    color: #888;
+    white-space: nowrap; /* Prevents text from wrapping */
+    position: relative;
+    left: -35px;
+  }
+  
+  .header-staked, .token-balance {
+    flex-basis: 30%;
+    text-align: right;
+    white-space: nowrap; /* Prevents text from wrapping */
+  }
+  
+  .balance-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  

@@ -326,19 +326,19 @@ const WalletStatus = memo(({ connection, onBalanceClick, onStakeClaim, isProcess
               onClick={() => window.open("https://app.meteora.ag/pools/GgaDTFbqdgjoZz3FP7zrtofGwnRS4E6MCzmmD5Ni1Mxj", "_blank")}
               className="button lp-button"
             >
-              ORE-SOL (Meteora) LP
+              Buy ORE-SOL (Meteora) LP
             </button>
             <button
               onClick={() => window.open("https://app.meteora.ag/pools/2vo5uC7jbmb1zNqYpKZfVyewiQmRmbJktma4QHuGNgS5", "_blank")}
               className="button lp-button"
             >
-              ORE-ISC (Meteora) LP
+              Buy ORE-ISC (Meteora) LP
             </button>
             <button
               onClick={() => window.open("https://app.kamino.finance/liquidity/6TFdY15Mxty9sRCtzMXG8eHSbZy4oiAEQUvLQdz9YwEn", "_blank")}
               className="button lp-button"
             >
-              ORE-SOL (Kamino) LP
+              Buy ORE-SOL (Kamino) LP
             </button>
           </div>
         </>

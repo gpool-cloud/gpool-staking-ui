@@ -25,6 +25,9 @@ const PoolInfo = memo(({ connection }) => {
                 <li>2. Click on LP token you want to stake in Wallet Balance section</li>
                 <li>3. Click "Stake Boost" button and sign the transaction</li>
             </ul>
+
+            <p>To view your rewards and claim it use <a href="https://dashboard.gpool.cloud/" target="_blank" rel="noopener noreferrer" className="nav-link">Dashboard & Rewards</a></p>
+
         </div>
     );
 });

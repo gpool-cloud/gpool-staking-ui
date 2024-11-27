@@ -17,7 +17,7 @@ import PoolInfo from "../components/PoolInfo";
 import { Buffer } from "buffer";
 import Script from "next/script";
 import Image from "next/image";
-import { TOKEN_LIST, mintAddressToDecimals } from "../components/tokens";
+import { TOKEN_LIST, BACKEND_TOKEN_LIST_TO_MINT_ADDRESS, mintAddressToDecimals } from "../components/tokens";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -74,6 +74,7 @@ function AppContent() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isStakeActive, setIsStakeActive] = useState(true);
   const [countdown, setCountdown] = useState("");
+  const [activeBoosts, setActiveBoosts] = useState([]);
 
   const connection = useMemo(
     () => new Connection(process.env.NEXT_PUBLIC_RPC_URL),
@@ -102,6 +103,41 @@ function AppContent() {
     };
     fetchDecimals();
   }, [mintAddress, connection]);
+
+  useEffect(() => {
+      const fetchActiveBoosts = async () => {
+        try {
+          const response = await fetch('/api/active-boosts', {
+            headers: {
+              'Accept': 'application/json',
+            },
+          });
+          
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          
+          const boosts = await response.json();
+          // convert to mint addresses
+          const mintAddresses = boosts.map(name => {
+            const token = BACKEND_TOKEN_LIST_TO_MINT_ADDRESS[name];
+            return token ? token : null;
+          });
+          setActiveBoosts(mintAddresses);
+        } catch (error) {
+          console.error('Error fetching active boosts:', error);
+          toast.error('Failed to fetch active boosts');
+        }
+      };
+  
+      fetchActiveBoosts();
+      const interval = setInterval(fetchActiveBoosts, 5 * 60 * 1000);
+      return () => clearInterval(interval);
+    }, []);
+
+  const isBoostActive = useMemo(() => {
+    return activeBoosts.includes(mintAddress);
+  }, [activeBoosts, mintAddress]);
 
   const handleBalanceClick = useCallback((tokenName, balance) => {
     const selectedToken = TOKEN_LIST.find((token) => token.name === tokenName);
@@ -573,13 +609,16 @@ function AppContent() {
             <div className="button-group">
               <button
                 onClick={handleStakeBoost}
-                className={`button stake-button ${
-                  isStakeActive ? "active" : "inactive"
-                }`}
-                disabled={!isStakeActive || isProcessing}
+                className={`button stake-button ${isBoostActive ? "active" : "inactive"}`}
+                disabled={!isBoostActive || isProcessing}
               >
                 {isProcessing ? "Processing..." : "Stake Boost"}
               </button>
+              {!isBoostActive && (
+                <div className="boost-inactive-hint">
+                  This boost is not enabled in the pool, so no staking is allowed
+                </div>
+              )}
               <button
                 onClick={handleUnstakeBoost}
                 className="button unstake-button"

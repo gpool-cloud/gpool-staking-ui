@@ -39,12 +39,17 @@ const WalletBalances = memo(({ publicKey, connection, onBalanceClick, refreshCou
   const fetchBalances = useCallback(async () => {
     if (publicKey && connection) {
       try {
-        const balancePromises = TOKEN_LIST.map(async (token) => {
-          if (token.name === "SOL") {
-            const balanceLamports = await connection.getBalance(publicKey);
-            const balanceSOL = balanceLamports / 1e9;
-            return { name: token.name, balance: balanceSOL };
-          } else {
+        // Prepare accounts to fetch
+        const accountsToFetch = [];
+        const accountMapping = {};
+        
+        // Add SOL account
+        accountsToFetch.push(publicKey);
+        accountMapping[publicKey.toString()] = 'SOL';
+        
+        // Add token accounts
+        TOKEN_LIST.forEach((token) => {
+          if (token.name !== 'SOL') {
             const mintPublicKey = new PublicKey(token.mintAddress);
             const tokenAccount = getAssociatedTokenAddressSync(
               mintPublicKey,
@@ -52,22 +57,36 @@ const WalletBalances = memo(({ publicKey, connection, onBalanceClick, refreshCou
               false,
               TOKEN_PROGRAM_ID
             );
-
-            const accountInfo = await connection.getAccountInfo(tokenAccount);
-            if (!accountInfo) return { name: token.name, balance: "0.00" };
-
-            const tokenBalance = await connection.getTokenAccountBalance(tokenAccount);
-            const balance = Number(tokenBalance.value.uiAmount) || 0;
-            return { name: token.name, balance: balance };
+            accountsToFetch.push(tokenAccount);
+            accountMapping[tokenAccount.toString()] = token.name;
           }
         });
-
-        const results = await Promise.all(balancePromises);
-        const balancesObj = results.reduce((acc, curr) => {
-          acc[curr.name] = curr.balance;
-          return acc;
-        }, {});
-
+  
+        // Fetch all accounts in one RPC call
+        const accountInfos = await connection.getMultipleAccountsInfo(accountsToFetch);
+        
+        // Process results
+        const balancesObj = {};
+        accountInfos.forEach((accountInfo, index) => {
+          const account = accountsToFetch[index];
+          const tokenName = accountMapping[account.toString()];
+          
+          if (tokenName === 'SOL') {
+            const balanceSOL = (accountInfo?.lamports || 0) / 1e9;
+            balancesObj[tokenName] = balanceSOL;
+          } else {
+            if (!accountInfo) {
+              balancesObj[tokenName] = "0.00";
+            } else {
+              // Parse SPL token account data
+              const data = accountInfo.data;
+              const amount = data.readBigUInt64LE(64); // Amount is stored at offset 64
+              const decimals = TOKEN_LIST.find(t => t.name === tokenName)?.decimals || 9;
+              balancesObj[tokenName] = Number(amount) / Math.pow(10, decimals);
+            }
+          }
+        });
+  
         setBalances((prevBalances) => {
           const prev = JSON.stringify(prevBalances);
           const current = JSON.stringify(balancesObj);
@@ -158,18 +177,33 @@ const StakedBalances = memo(({ publicKey, connection, onBalanceClick, refreshCou
     if (!publicKey || !connection) return;
   
     try {
-      // Get all possible share PDAs for each token in TOKEN_LIST
-      const sharePromises = TOKEN_LIST.map(async (token) => {
-        if (!token.mintAddress) return null;
-  
+      // Prepare all PDAs to fetch in a single request
+      const accountsToFetch = TOKEN_LIST.reduce((acc, token) => {
+        if (!token.mintAddress) return acc;
+        
         const mint = new PublicKey(token.mintAddress);
         const pool = getPoolPda(GPOOL_AUTHORITY);
         const [sharePda] = getSharePda(publicKey, pool, mint);
+        
+        acc.push({
+          pubkey: sharePda,
+          token: token
+        });
+        return acc;
+      }, []);
   
-        try {
-          const accountInfo = await connection.getAccountInfo(sharePda);
+      // Fetch all accounts in one RPC call
+      const accountInfos = await connection.getMultipleAccountsInfo(
+        accountsToFetch.map(item => item.pubkey)
+      );
+  
+      // Process results
+      const validBalances = accountInfos
+        .map((accountInfo, index) => {
           if (!accountInfo) return null;
-  
+          
+          const token = accountsToFetch[index].token;
+          
           // Skip discriminator (8 bytes) and parse the data
           const data = accountInfo.data.slice(8);
           
@@ -183,16 +217,8 @@ const StakedBalances = memo(({ publicKey, connection, onBalanceClick, refreshCou
             mintAddress: token.mintAddress,
             stakedBalance: balanceNum / (10 ** (token.decimals || 11))
           };
-        } catch (error) {
-          console.error(`Error fetching share for ${token.name}:`, error);
-          return null;
-        }
-      });
-  
-      const results = await Promise.all(sharePromises);
-      const validBalances = results.filter(result => 
-        result !== null && result.stakedBalance > 0
-      );
+        })
+        .filter(result => result !== null && result.stakedBalance > 0);
   
       setStakedBalances(validBalances);
       

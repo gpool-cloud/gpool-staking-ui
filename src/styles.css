@@ -982,3 +982,9 @@ body::after {
     margin: 0;
   }
   
+  .boost-inactive-hint {
+    color: #ff6b6b;
+    font-size: 0.9em;
+    margin-top: 8px;
+    text-align: center;
+  }

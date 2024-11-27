@@ -5,6 +5,13 @@ export const TOKEN_LIST = [
     { name: "ORE-ISC (Meteora) LP", mintAddress: "meUwDp23AaxhiNKaQCyJ2EAF2T4oe1gSkEkGXSRVdZb", decimals: 11 },
     { name: "ORE-SOL (Kamino) LP", mintAddress: "8H8rPiWW4iTFCfEkSnf7jpqeNpFfvdH9gLouAL3Fe2Zx", decimals: 6 },
   ];
+
+export const BACKEND_TOKEN_LIST_TO_MINT_ADDRESS = {
+  "ORE": "oreoU2P8bN6jkk3jbaiVxYnG1dCXcYxwhwyK9jSybcp",
+  "ORE_SOL": "DrSS5RM7zUd9qjUEdDaf31vnDUSbCrMto6mjqTrHFifN",
+  "ORE_ISC": "meUwDp23AaxhiNKaQCyJ2EAF2T4oe1gSkEkGXSRVdZb",
+  "ORE_SOL_KAMINO": "8H8rPiWW4iTFCfEkSnf7jpqeNpFfvdH9gLouAL3Fe2Zx"
+}
   
 export const mintAddressToTokenName = {
   "oreoU2P8bN6jkk3jbaiVxYnG1dCXcYxwhwyK9jSybcp": "ORE",

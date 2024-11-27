@@ -32,7 +32,6 @@ export default function RootLayout({ children }) {
                 clickmap:true,
                 trackLinks:true,
                 accurateTrackBounce:true
-                trackHash: true,
               });
             `
           }}

@@ -243,7 +243,7 @@ function AppContent() {
       const unstakeInstruction = await createPoolUnstakeInstruction(
         staker,
         mint,
-        stakeAmount
+        unstakeAmount
       );
       transaction.add(unstakeInstruction);
 

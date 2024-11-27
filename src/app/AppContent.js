@@ -61,7 +61,7 @@ function getMemberPda(authority, pool) {
   return PublicKey.findProgramAddressSync(
     [Buffer.from("member"), authority.toBuffer(), pool.toBuffer()],
     poolProgramId
-  )[0];
+  );
 }
 
 function AppContent() {
@@ -158,15 +158,11 @@ function AppContent() {
       const stakeAmount = BigInt(Math.floor(stakeAmountFloat * 10 ** lp_decimals));
       const pool = getPoolPda(GPOOL_AUTHORITY);
       const [share_pda, share_bump] = getSharePda(staker, pool, mint);
-      const member_pda = getMemberPda(staker, pool);
+      const [member_pda, member_bump] = getMemberPda(staker, pool);
 
       const memberAccountInfo = await connection.getAccountInfo(member_pda);
       if (!memberAccountInfo) {
-        const createMemberInstruction = await createPoolMemberInstruction(
-          staker,
-          staker,
-          pool
-        );
+        const createMemberInstruction = await createPoolMemberInstruction(staker);
         transaction.add(createMemberInstruction);
         toast.info("Pool Member NOT found, adding create member instruction");
       } else {
@@ -390,12 +386,9 @@ function AppContent() {
     return instruction;
   }
 
-  const createPoolMemberInstruction = async (
-    memberAuthority,
-    poolAuthority
-  ) => {
-    const pool = getPoolPda(poolAuthority);
-    const member = getMemberPda(memberAuthority, pool);
+  const createPoolMemberInstruction = async (memberAuthority) => {
+    const pool = getPoolPda(GPOOL_AUTHORITY);
+    const [member, member_bump] = getMemberPda(memberAuthority, pool);
 
     const instruction = new TransactionInstruction({
       keys: [
@@ -406,7 +399,8 @@ function AppContent() {
         { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
       ],
       programId: poolProgramId,
-      data: Buffer.from([1]) // JOIN instruction
+      data: Buffer.concat([Buffer.from([1]), Buffer.from([member_bump])]) // JOIN instruction
+
     });
 
     return instruction;
@@ -419,7 +413,7 @@ function AppContent() {
   ) => {
     const pool = getPoolPda(GPOOL_AUTHORITY);
     const poolTokens = getAssociatedTokenAddressSync(mint, pool, true);
-    const member = getMemberPda(memberAuthority, pool);
+    const [member, member_bump] = getMemberPda(memberAuthority, pool);
     const [share, share_bump] = getSharePda(memberAuthority, pool, mint);
     const sender = getAssociatedTokenAddressSync(mint, memberAuthority);
 
@@ -450,7 +444,7 @@ function AppContent() {
   ) => {
     const pool = getPoolPda(GPOOL_AUTHORITY);
     const poolTokens = getAssociatedTokenAddressSync(mint, pool, true);
-    const member = getMemberPda(memberAuthority, pool);
+    const [member, member_bump] = getMemberPda(memberAuthority, pool);
     const [share, share_bump] = getSharePda(memberAuthority, pool, mint);
     const recipient = getAssociatedTokenAddressSync(mint, memberAuthority);
     const boost_pda = getBoostPda(mint);

@@ -10,7 +10,7 @@ import {
   TransactionInstruction,
   SYSVAR_RENT_PUBKEY,
 } from "@solana/web3.js";
-import { getMint, getAssociatedTokenAddressSync } from "@solana/spl-token";
+import { getMint, getAssociatedTokenAddressSync, createAssociatedTokenAccountInstruction } from "@solana/spl-token";
 import WalletStatus from "../components/WalletStatus";
 import PoolInfo from "../components/PoolInfo";
 
@@ -271,6 +271,14 @@ function AppContent() {
         Math.round(unstakeAmountFloat * 10 ** decimals)
       );
 
+      const ataAddress = getAssociatedTokenAddressSync(mint, staker, true);
+      // check if ataAddress has been created
+      const ataAccountInfo = await connection.getAccountInfo(ataAddress);
+      if (!ataAccountInfo) {
+        console.log("ATA NOT found, adding create ata instruction");
+        const createAtaInstruction = createAssociatedTokenAccountInstruction(staker, ataAddress, staker, mint);
+        transaction.add(createAtaInstruction);
+      }
       // for debug add unstake instruction here as well
       const unstakeInstruction = await createPoolUnstakeInstruction(
         staker,

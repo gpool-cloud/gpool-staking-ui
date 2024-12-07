@@ -4,20 +4,23 @@ export const TOKEN_LIST = [
     { name: "ORE-SOL (Meteora) LP", mintAddress: "DrSS5RM7zUd9qjUEdDaf31vnDUSbCrMto6mjqTrHFifN", decimals: 11 },
     { name: "ORE-ISC (Meteora) LP", mintAddress: "meUwDp23AaxhiNKaQCyJ2EAF2T4oe1gSkEkGXSRVdZb", decimals: 11 },
     { name: "ORE-SOL (Kamino) LP", mintAddress: "8H8rPiWW4iTFCfEkSnf7jpqeNpFfvdH9gLouAL3Fe2Zx", decimals: 6 },
+    { name: "ORE-HNT (Kamino) LP", mintAddress: "7G3dfZkSk1HpDGnyL37LMBbPEgT4Ca6vZmZPUyi2syWt", decimals: 6 }
   ];
 
 export const BACKEND_TOKEN_LIST_TO_MINT_ADDRESS = {
   "ORE": "oreoU2P8bN6jkk3jbaiVxYnG1dCXcYxwhwyK9jSybcp",
   "ORE_SOL": "DrSS5RM7zUd9qjUEdDaf31vnDUSbCrMto6mjqTrHFifN",
   "ORE_ISC": "meUwDp23AaxhiNKaQCyJ2EAF2T4oe1gSkEkGXSRVdZb",
-  "ORE_SOL_KAMINO": "8H8rPiWW4iTFCfEkSnf7jpqeNpFfvdH9gLouAL3Fe2Zx"
+  "ORE_SOL_KAMINO": "8H8rPiWW4iTFCfEkSnf7jpqeNpFfvdH9gLouAL3Fe2Zx",
+  "ORE_HNT_KAMINO": "7G3dfZkSk1HpDGnyL37LMBbPEgT4Ca6vZmZPUyi2syWt"
 }
   
 export const mintAddressToTokenName = {
   "oreoU2P8bN6jkk3jbaiVxYnG1dCXcYxwhwyK9jSybcp": "ORE",
   "DrSS5RM7zUd9qjUEdDaf31vnDUSbCrMto6mjqTrHFifN": "ORE-SOL (Meteora) LP",
   "meUwDp23AaxhiNKaQCyJ2EAF2T4oe1gSkEkGXSRVdZb": "ORE-ISC (Meteora) LP",
-  "8H8rPiWW4iTFCfEkSnf7jpqeNpFfvdH9gLouAL3Fe2Zx": "ORE-SOL (Kamino) LP"
+  "8H8rPiWW4iTFCfEkSnf7jpqeNpFfvdH9gLouAL3Fe2Zx": "ORE-SOL (Kamino) LP",
+  "7G3dfZkSk1HpDGnyL37LMBbPEgT4Ca6vZmZPUyi2syWt": "ORE-HNT (Kamino) LP"
 };
 
 export const mintAddressToDecimals = {
@@ -25,11 +28,13 @@ export const mintAddressToDecimals = {
   "DrSS5RM7zUd9qjUEdDaf31vnDUSbCrMto6mjqTrHFifN": 11,
   "meUwDp23AaxhiNKaQCyJ2EAF2T4oe1gSkEkGXSRVdZb": 11,
   "8H8rPiWW4iTFCfEkSnf7jpqeNpFfvdH9gLouAL3Fe2Zx": 6, // kamino uses less decimals
+  "7G3dfZkSk1HpDGnyL37LMBbPEgT4Ca6vZmZPUyi2syWt": 6
 };
 
 export const tokenNameToMintAddress = {
   "ORE": "oreoU2P8bN6jkk3jbaiVxYnG1dCXcYxwhwyK9jSybcp",
   "ORE-SOL (Meteora) LP": "DrSS5RM7zUd9qjUEdDaf31vnDUSbCrMto6mjqTrHFifN",
   "ORE-ISC (Meteora) LP": "meUwDp23AaxhiNKaQCyJ2EAF2T4oe1gSkEkGXSRVdZb",
-  "ORE-SOL (Kamino) LP": "8H8rPiWW4iTFCfEkSnf7jpqeNpFfvdH9gLouAL3Fe2Zx"
+  "ORE-SOL (Kamino) LP": "8H8rPiWW4iTFCfEkSnf7jpqeNpFfvdH9gLouAL3Fe2Zx",
+  "ORE-HNT (Kamino) LP": "7G3dfZkSk1HpDGnyL37LMBbPEgT4Ca6vZmZPUyi2syWt"
 };

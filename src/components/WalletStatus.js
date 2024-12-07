@@ -366,6 +366,12 @@ const WalletStatus = memo(({ connection, onBalanceClick, onStakeClaim, isProcess
             >
               Buy ORE-SOL (Kamino) LP
             </button>
+            <button
+              onClick={() => window.open("https://app.kamino.finance/liquidity/9XsAPjk1yp4U6hKZj9r9szhcxBi3RidGuyxiC2Y8JtAe", "_blank")}
+              className="button lp-button"
+            >
+              Buy ORE-HNT (Kamino) LP
+            </button>
           </div>
         </>
       ) : (

@@ -219,11 +219,13 @@ const StakedBalances = memo(({ publicKey, connection, onBalanceClick, refreshCou
           };
         })
         .filter(result => result !== null && result.stakedBalance > 0);
-  
+      console.log(validBalances);
       setStakedBalances(validBalances);
+      setIsFirstLoad(false);
       
     } catch (error) {
       console.error("Error fetching staked balances:", error);
+      setIsFirstLoad(false);
     }
   }, [publicKey, connection]);
 
@@ -242,7 +244,7 @@ const StakedBalances = memo(({ publicKey, connection, onBalanceClick, refreshCou
       <h3 className="large-heading">Staked Balance:</h3>
       <p style={{ fontSize: "0.85em", color: "#888" }}>(Yield earning):</p>
       
-      {isFirstLoad && stakedBalances.length === 0 ? (
+      {isFirstLoad ? (
         <p className="loading-text">Loading staked balances...</p>
       ) : (
         <>
@@ -252,18 +254,26 @@ const StakedBalances = memo(({ publicKey, connection, onBalanceClick, refreshCou
             <span className="header-staked">Staked</span>
           </div>
           <ul className="balance-list">
-            {stakedBalances.map(({ tokenName, stakedBalance, rewardsBalance }) => (
-              <li
-                key={tokenName}
-                onClick={() => handleClick(tokenName, stakedBalance)}
-                className="balance-item"
-                title="Click to use this staked balance"
-              >
-                <span className="token-name">{tokenName}</span>
-                <span className="token-rewards">{rewardsBalance}</span>
-                <span className="token-balance">{stakedBalance}</span>
+            {stakedBalances.length > 0 ? (
+              stakedBalances.map(({ tokenName, stakedBalance, rewardsBalance }) => (
+                <li
+                  key={tokenName}
+                  onClick={() => handleClick(tokenName, stakedBalance)}
+                  className="balance-item"
+                  title="Click to use this staked balance"
+                >
+                  <span className="token-name">{tokenName}</span>
+                  <span className="token-rewards">{rewardsBalance}</span>
+                  <span className="token-balance">{stakedBalance}</span>
+                </li>
+              ))
+            ) : (
+              <li className="balance-item">
+                <span className="token-name">No staked balances</span>
+                <span className="token-rewards">-</span>
+                <span className="token-balance">-</span>
               </li>
-            ))}
+            )}
           </ul>
         </>
       )}

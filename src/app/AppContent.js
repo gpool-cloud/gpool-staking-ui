@@ -110,6 +110,7 @@ function AppContent() {
           const response = await fetch('/api/active-boosts', {
             headers: {
               'Accept': 'application/json',
+              'Content-Type': 'application/json',
             },
           });
           

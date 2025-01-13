@@ -570,13 +570,17 @@ function AppContent() {
         signature: signatureString
       };
 
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000);
       const response = await fetch('/api/claim_v2', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(claimData)
+        body: JSON.stringify(claimData),
+        signal: controller.signal
       });
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         const errorData = await response.json();

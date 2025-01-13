@@ -588,7 +588,11 @@ function AppContent() {
       }
 
       const result = await response.json();
-      toast.success("Claim processed successfully!");
+      if (result.success) {
+        toast.success(result.message || "Claim processed successfully!");
+      } else {
+        toast.error(result.message || "Failed to process claim");
+      }
       setClaimAmount("");
       
     } catch (error) {

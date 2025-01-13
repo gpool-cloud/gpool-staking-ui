@@ -294,10 +294,10 @@ const ClaimableBalances = memo(({ publicKey, onClaimClick, refreshCount }) => {
       if (!response.ok) throw new Error('Failed to fetch claimable balances');
       
       const data = await response.json();
-      data.earned = data.earned / 10e11;
-      data.claimed = data.claimed / 10e11;
-      data.earned_coal = data.earned_coal / 10e11;
-      data.claimed_coal = data.claimed_coal / 10e11;
+      data.earned = data.earned / 1e11;
+      data.claimed = data.claimed / 1e11;
+      data.earned_coal = data.earned_coal / 1e11;
+      data.claimed_coal = data.claimed_coal / 1e11;
       setClaimableBalances(data);
     } catch (error) {
       console.error("Error fetching claimable balances:", error);

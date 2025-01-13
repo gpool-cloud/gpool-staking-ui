@@ -988,3 +988,125 @@ body::after {
     margin-top: 8px;
     text-align: center;
   }
+  .claimable-balances-section {
+    margin-top: 20px;
+  }
+  
+  .balance-item.disabled {
+    opacity: 0.7;
+    cursor: default;
+  }
+  
+  .balance-item:not(.disabled):hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+  }
+
+  .section-separator {
+    margin: 24px 0;
+    border: 0;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.2);
+  }
+  
+  .section-title {
+    font-size: 1.2rem;
+    color: #fff;
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+  
+  .staking-section,
+  .claiming-section {
+    padding: 16px 0;
+  }
+  
+  .claiming-section {
+    margin-top: 8px;
+  }
+  
+  /* Update existing card style if needed */
+  .card {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    padding: 24px;
+    margin: 20px 0;
+  }
+
+.claiming-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.claim-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  margin-bottom: 15px;
+  background-color: var(--input-background);
+  color: var(--text-color);
+}
+
+.claim-button {
+  /* Your existing button styles */
+  margin: 0 auto; /* This centers the button */
+  display: block;
+}
+
+.claim-input-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.token-toggle {
+  display: flex;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.toggle-button {
+  padding: 8px 12px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.toggle-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.toggle-button.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.toggle-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.claim-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.claim-button {
+  flex: 1;
+  min-width: 120px;
+  padding: 10px 20px;
+  background-color: #4CAF50;
+}
+
+.claim-button:hover:not(:disabled) {
+  background-color: #45a049;
+}
+
+  

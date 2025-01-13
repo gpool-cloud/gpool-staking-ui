@@ -9,6 +9,7 @@ import {
   SystemProgram,
   TransactionInstruction,
   SYSVAR_RENT_PUBKEY,
+  sign,
 } from "@solana/web3.js";
 import { getMint, getAssociatedTokenAddressSync, createAssociatedTokenAccountInstruction } from "@solana/spl-token";
 import WalletStatus from "../components/WalletStatus";
@@ -20,6 +21,7 @@ import Image from "next/image";
 import { TOKEN_LIST, BACKEND_TOKEN_LIST_TO_MINT_ADDRESS, mintAddressToDecimals } from "../components/tokens";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import bs58 from 'bs58';
 
 
 
@@ -67,6 +69,7 @@ function getMemberPda(authority, pool) {
 function AppContent() {
   const { publicKey, sendTransaction } = useWallet();
   const [amount, setAmount] = useState("");
+  const [claimAmount, setClaimAmount] = useState("");
   const [mintAddress, setMintAddress] = useState(
     "oreoU2P8bN6jkk3jbaiVxYnG1dCXcYxwhwyK9jSybcp"
   );
@@ -75,6 +78,7 @@ function AppContent() {
   const [isStakeActive, setIsStakeActive] = useState(true);
   const [countdown, setCountdown] = useState("");
   const [activeBoosts, setActiveBoosts] = useState([]);
+  const [selectedClaimToken, setSelectedClaimToken] = useState("ORE");
 
   const connection = useMemo(
     () => new Connection(process.env.NEXT_PUBLIC_RPC_URL),
@@ -528,6 +532,73 @@ function AppContent() {
     return !isNaN(num) ? num.toFixed(2) : "0.00";
   };
 
+  const handleClaim = useCallback(async (tokenType) => {
+    if (!publicKey) {
+      toast.error("Please connect your wallet");
+      return;
+    }
+
+    const claimAmountFloat = parseFloat(claimAmount);
+    if (isNaN(claimAmountFloat) || claimAmountFloat <= 0) {
+      toast.error("Please enter a valid amount to claim.");
+      return;
+    }
+
+    try {
+      setIsProcessing(true);
+      setSelectedClaimToken(tokenType);
+
+      const timestamp = Math.floor(Date.now() / 1000).toString();
+      const message = new TextEncoder().encode(`Claim ${claimAmountFloat} ${tokenType} for ${publicKey} at timestamp: ${timestamp}`);
+      
+      let signature;
+      try {
+        signature = await window.solana.signMessage(message, "utf8");
+      } catch (err) {
+        console.error("Error signing message:", err);
+        toast.error("Failed to sign message with wallet");
+        return;
+      }
+
+      const signatureString = bs58.encode(signature.signature);
+
+      const claimData = {
+        pubkey: publicKey.toString(),
+        timestamp: timestamp,
+        amount: claimAmountFloat,
+        token_id: tokenType === "ORE" ? "0" : "1",
+        signature: signatureString
+      };
+
+      const response = await fetch('/api/claim_v2', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(claimData)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to process claim');
+      }
+
+      const result = await response.json();
+      toast.success("Claim processed successfully!");
+      setClaimAmount("");
+      
+    } catch (error) {
+      console.error("Error claiming rewards:", error);
+      toast.error(`Error claiming rewards: ${error.message || error}`);
+    } finally {
+      setIsProcessing(false);
+    }
+  }, [publicKey, claimAmount]);
+
+  const handleClaimClick = useCallback((tokenName, amount) => {
+    setClaimAmount(amount.toString());
+  }, []);
+
   return (
     <>
       {/* <Script
@@ -581,66 +652,108 @@ function AppContent() {
           <WalletStatus
             connection={connection}
             onBalanceClick={handleBalanceClick}
-            onStakeClaim={null}
+            onClaimClick={handleClaimClick}
             isProcessing={isProcessing}
           />
 
           <hr className="separator" />
         </div>
         <div className="card">
-          <div className="input-group">
-            <input
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="Enter amount"
-              className="amount-input"
-              min="0"
-              step="any"
-              disabled={isProcessing && !isStakeActive}
-            />
+          {/* Staking Section */}
+          <div className="staking-section">
+            <h3 className="section-title">Stake/Unstake</h3>
+            <div className="input-group">
+              <input
+                type="number"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                placeholder="Enter amount"
+                className="amount-input"
+                min="0"
+                step="any"
+                disabled={isProcessing && !isStakeActive}
+              />
+            </div>
+
+            <div className="input-group">
+              <select
+                value={mintAddress || ""}
+                onChange={(e) => setMintAddress(e.target.value || null)}
+                className="select-token"
+              >
+                {TOKEN_LIST.filter((token) => token.mintAddress).map((token) => (
+                  <option key={token.name} value={token.mintAddress}>
+                    {token.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {publicKey ? (
+              <div className="button-group">
+                <button
+                  onClick={handleStakeBoost}
+                  className={`button stake-button ${isBoostActive ? "active" : "inactive"}`}
+                  disabled={!isBoostActive || isProcessing}
+                >
+                  {isProcessing ? "Processing..." : "Stake Boost"}
+                </button>
+                {!isBoostActive && (
+                  <div className="boost-inactive-hint">
+                    This boost is not enabled in the pool, so no staking is allowed
+                  </div>
+                )}
+                <button
+                  onClick={handleUnstakeBoost}
+                  className="button unstake-button"
+                  disabled={isProcessing}
+                >
+                  {isProcessing ? "Processing..." : "Unstake Boost"}
+                </button>
+              </div>
+            ) : (
+              <p className="connect-wallet-message">
+                Please connect your wallet to stake or unstake.
+              </p>
+            )}
           </div>
 
-          <div className="input-group">
-            <select
-              value={mintAddress || ""}
-              onChange={(e) => setMintAddress(e.target.value || null)}
-              className="select-token"
-            >
-              {TOKEN_LIST.filter((token) => token.mintAddress).map((token) => (
-                <option key={token.name} value={token.mintAddress}>
-                  {token.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          {publicKey ? (
-            <div className="button-group">
-              <button
-                onClick={handleStakeBoost}
-                className={`button stake-button ${isBoostActive ? "active" : "inactive"}`}
-                disabled={!isBoostActive || isProcessing}
-              >
-                {isProcessing ? "Processing..." : "Stake Boost"}
-              </button>
-              {!isBoostActive && (
-                <div className="boost-inactive-hint">
-                  This boost is not enabled in the pool, so no staking is allowed
-                </div>
-              )}
-              <button
-                onClick={handleUnstakeBoost}
-                className="button unstake-button"
+          <hr className="section-separator" />
+
+          {/* Claiming Section */}
+          <div className="claiming-section">
+            <h3 className="section-title">Claim Rewards</h3>
+            <div className="input-group claim-input-group">
+              <input
+                type="number"
+                value={claimAmount}
+                onChange={(e) => setClaimAmount(e.target.value)}
+                placeholder="Claim amount"
+                className="claim-input"
+                min="0"
+                step="any"
                 disabled={isProcessing}
-              >
-                {isProcessing ? "Processing..." : "Unstake Boost"}
-              </button>
+              />
             </div>
-          ) : (
-            <p className="connect-wallet-message">
-              Please connect your wallet to stake or unstake.
-            </p>
-          )}
+            {publicKey && (
+              <div className="claim-buttons">
+                <button
+                  onClick={() => handleClaim("ORE")}
+                  className="button claim-button"
+                  disabled={isProcessing || !claimAmount}
+                >
+                  {isProcessing && selectedClaimToken === "ORE" ? "Processing..." : "Claim ORE"}
+                </button>
+                <button
+                  onClick={() => handleClaim("COAL")}
+                  className="button claim-button"
+                  disabled={isProcessing || !claimAmount}
+                >
+                  {isProcessing && selectedClaimToken === "COAL" ? "Processing..." : "Claim COAL"}
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
       <ToastContainer

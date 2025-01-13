@@ -128,19 +128,19 @@ const WalletBalances = memo(({ publicKey, connection, onBalanceClick, refreshCou
       ) : (
         <ul className="balance-list">
           {TOKEN_LIST.map((token) => (
-            <li
-              key={token.name}
-              onClick={() => handleClick(token.name)}
-              className={`balance-item ${!token.mintAddress ? "disabled" : ""}`}
-              title={token.mintAddress ? "Click to use this balance" : "Cannot stake SOL"}
-            >
-              <span className="token-name">{token.name}:</span>
-              <span className="token-balance">
-                {balances[token.name] !== undefined && balances[token.name] !== null
-                  ? formatBalance(balances[token.name])
-                  : "0.00"}
-              </span>
-            </li>
+            balances[token.name] !== undefined && balances[token.name] !== null && balances[token.name] != 0 ? (
+              <li
+                key={token.name}
+                onClick={() => handleClick(token.name)}
+                className={`balance-item ${!token.mintAddress ? "disabled" : ""}`}
+                title={token.mintAddress ? "Click to use this balance" : "Cannot stake SOL"}
+              >
+                <span className="token-name">{token.name}:</span>
+                <span className="token-balance">
+                  {formatBalance(balances[token.name])}
+                </span>
+              </li>
+            ) : null
           ))}
         </ul>
       )}
@@ -153,7 +153,6 @@ WalletBalances.displayName = "WalletBalances";
 const StakedBalances = memo(({ publicKey, connection, onBalanceClick, refreshCount }) => {
   const [stakedBalances, setStakedBalances] = useState([]);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
-  const [totalStakeRewards, setTotalStakeRewards] = useState("0.00");
 
   const mintAddresses = useMemo(() => {
     return TOKEN_LIST.filter((token) => token.mintAddress).reduce(
@@ -241,16 +240,13 @@ const StakedBalances = memo(({ publicKey, connection, onBalanceClick, refreshCou
 
   return (
     <div className="staked-balances">
-      <h3 className="large-heading">Staked Balance:</h3>
-      <p style={{ fontSize: "0.85em", color: "#888" }}>(Yield earning):</p>
-      
+      <h3 className="large-heading">Staked Balance:</h3>      
       {isFirstLoad ? (
         <p className="loading-text">Loading staked balances...</p>
       ) : (
         <>
           <div className="balance-header">
             <span className="header-token-name">Token</span>
-            <span className="header-rewards">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rewards (ORE)</span>
             <span className="header-staked">Staked</span>
           </div>
           <ul className="balance-list">
@@ -263,14 +259,12 @@ const StakedBalances = memo(({ publicKey, connection, onBalanceClick, refreshCou
                   title="Click to use this staked balance"
                 >
                   <span className="token-name">{tokenName}</span>
-                  <span className="token-rewards">{rewardsBalance}</span>
                   <span className="token-balance">{stakedBalance}</span>
                 </li>
               ))
             ) : (
               <li className="balance-item">
                 <span className="token-name">No staked balances</span>
-                <span className="token-rewards">-</span>
                 <span className="token-balance">-</span>
               </li>
             )}
@@ -283,8 +277,89 @@ const StakedBalances = memo(({ publicKey, connection, onBalanceClick, refreshCou
 
 StakedBalances.displayName = "StakedBalances";
 
+const ClaimableBalances = memo(({ publicKey, onClaimClick, refreshCount }) => {
+  const [claimableBalances, setClaimableBalances] = useState({
+    earned: 0,
+    claimed: 0,
+    earned_coal: 0,
+    claimed_coal: 0
+  });
+  const [isLoading, setIsLoading] = useState(true);
 
-const WalletStatus = memo(({ connection, onBalanceClick, onStakeClaim, isProcessing }) => {
+  const fetchClaimableBalances = useCallback(async () => {
+    if (!publicKey) return;
+    
+    try {
+      const response = await fetch(`/api/balance?pubkey=${publicKey.toString()}`);
+      if (!response.ok) throw new Error('Failed to fetch claimable balances');
+      
+      const data = await response.json();
+      data.earned = data.earned / 10e11;
+      data.claimed = data.claimed / 10e11;
+      data.earned_coal = data.earned_coal / 10e11;
+      data.claimed_coal = data.claimed_coal / 10e11;
+      setClaimableBalances(data);
+    } catch (error) {
+      console.error("Error fetching claimable balances:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [publicKey]);
+
+  useEffect(() => {
+    fetchClaimableBalances();
+  }, [fetchClaimableBalances, refreshCount]);
+
+  const handleClick = (tokenName, amount) => {
+    if (onClaimClick) {
+      onClaimClick(tokenName, amount);
+    }
+  };
+
+  return (
+    <div className="claimable-balances-section">
+      <h3 className="large-heading">Claimable Balance:</h3>
+      {isLoading ? (
+        <p className="loading-text">Loading claimable balances...</p>
+      ) : (
+        <ul className="balance-list">
+          <li 
+            className="balance-item"
+            onClick={() => handleClick('ORE', claimableBalances.earned - claimableBalances.claimed)}
+            title="Click to claim ORE"
+          >
+            <span className="token-name">Available ORE:</span>
+            <span className="token-balance">
+              {formatBalance(claimableBalances.earned - claimableBalances.claimed)}
+            </span>
+          </li>
+          <li 
+            className="balance-item"
+            onClick={() => handleClick('COAL', claimableBalances.earned_coal - claimableBalances.claimed_coal)}
+            title="Click to claim COAL"
+          >
+            <span className="token-name">Available COAL:</span>
+            <span className="token-balance">
+              {formatBalance(claimableBalances.earned_coal - claimableBalances.claimed_coal)}
+            </span>
+          </li>
+          <li className="balance-item disabled">
+            <span className="token-name">Total earned ORE:</span>
+            <span className="token-balance">{formatBalance(claimableBalances.earned)}</span>
+          </li>
+          <li className="balance-item disabled">
+            <span className="token-name">Total earned COAL:</span>
+            <span className="token-balance">{formatBalance(claimableBalances.earned_coal)}</span>
+          </li>
+        </ul>
+      )}
+    </div>
+  );
+});
+
+ClaimableBalances.displayName = "ClaimableBalances";
+
+const WalletStatus = memo(({ connection, onBalanceClick, onClaimClick, isProcessing }) => {
   const { publicKey } = useWallet();
   const [copied, setCopied] = useState(false);
   const [refreshCount, setRefreshCount] = useState(0);
@@ -351,7 +426,13 @@ const WalletStatus = memo(({ connection, onBalanceClick, onStakeClaim, isProcess
             onBalanceClick={onBalanceClick}
             refreshCount={refreshCount}
           />
-          <div className="lp-links">
+          <hr className="separator" />
+          <ClaimableBalances
+            publicKey={publicKey}
+            onClaimClick={onClaimClick}
+            refreshCount={refreshCount}
+          />
+          {/* <div className="lp-links">
             <button
               onClick={() => window.open("https://jup.ag/swap/SOL-ORE", "_blank")}
               className="button lp-button"
@@ -382,7 +463,7 @@ const WalletStatus = memo(({ connection, onBalanceClick, onStakeClaim, isProcess
             >
               Buy ORE-HNT (Kamino) LP
             </button>
-          </div>
+          </div> */}
         </>
       ) : (
         <WalletMultiButton className="wallet-adapter-button" />

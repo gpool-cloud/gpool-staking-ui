@@ -12,7 +12,6 @@ function App() {
         () => [
             new PhantomWalletAdapter(),
             new SolflareWalletAdapter(),
-            // new BackpackWalletAdapter()
         ],
         []
     );
@@ -22,7 +21,7 @@ function App() {
 
     return (
         <ConnectionProvider endpoint={network}>
-            <WalletProvider wallets={wallets} autoConnect={true}>
+            <WalletProvider wallets={wallets} autoConnect={false}>
                 <WalletModalProvider>
                     <AppContent />
                 </WalletModalProvider>

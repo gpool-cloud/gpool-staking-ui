@@ -22,6 +22,12 @@ const WalletMultiButton = dynamic(
   { ssr: false }
 );
 
+const ReactUIWalletDisconnectButtonDynamic = dynamic(
+  async () => (await import('@solana/wallet-adapter-react-ui')).WalletDisconnectButton,
+  { ssr: false }
+);
+
+
 const formatPubkey = (pubkey) => {
   if (!pubkey || pubkey.length < 8) return pubkey;
   return `${pubkey.slice(0, 4)}...${pubkey.slice(-4)}`;
@@ -310,9 +316,29 @@ const ClaimableBalances = memo(({ publicKey, onClaimClick, refreshCount }) => {
     fetchClaimableBalances();
   }, [fetchClaimableBalances, refreshCount]);
 
-  const handleClick = (tokenName, amount) => {
-    if (onClaimClick) {
-      onClaimClick(tokenName, amount);
+  const handleClick = async (tokenName, amount) => {
+    if (!amount || amount <= 0) {
+      toast.warn("No balance available to claim");
+      return;
+    }
+
+    try {
+      // First check if wallet is properly connected
+      if (!window.solana?.isConnected) {
+        toast.error("Please ensure your wallet is properly connected");
+        return;
+      }
+
+      if (onClaimClick) {
+        await onClaimClick(tokenName, amount);
+      }
+    } catch (error) {
+      console.error("Error during claim:", error);
+      toast.error(
+        error.message.includes("authorized") 
+          ? "Please authorize the transaction in your wallet" 
+          : "Failed to process claim. Please try reconnecting your wallet."
+      );
     }
   };
 
@@ -411,6 +437,7 @@ const WalletStatus = memo(({ connection, onBalanceClick, onClaimClick, isProcess
               {isRefreshing ? "Refreshing..." : "Refresh 🔄"}
             </button>
           </div>
+          <ReactUIWalletDisconnectButtonDynamic />
           <br />
           <p className="no-margin">(Click the individual line to pre-populate totals):</p>
           <WalletBalances

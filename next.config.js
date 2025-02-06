@@ -4,7 +4,7 @@ const nextConfig = {
       return [
         {
           source: '/api/:path*',
-          destination: 'https://ore.gpool.cloud/:path*',
+          destination: 'https://api.gpool.cloud/:path*',
         },
       ];
     },
